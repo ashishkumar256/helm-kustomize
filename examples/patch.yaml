@@ -1,0 +1,9 @@
+- target:
+    kind: Deployment
+    name: demo-grafana-ui
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/env
+      value:
+        - name: PG_LOG_LEVEL
+          value: "debug"
