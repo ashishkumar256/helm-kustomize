@@ -2,9 +2,9 @@
 
 ## Overview
 
-Community/vendor Helm charts often don't expose every field you need (env vars, sidecar containers, resource tweaks, labels) via values.yaml. Rather than forking the chart, this plugin lets you patch the rendered output directly, targeting any resource by kind, name, namespace, or label — without touching the chart source.
+Community/vendor Helm charts often don't expose every field we need (env vars, sidecar containers, resource tweaks, labels) via values.yaml. Rather than forking the chart, this plugin lets everyone patch the rendered output directly, targeting any resource by kind, name, namespace, or label — without touching the chart source.
 
-It plugs into Helm's standard --post-renderer hook (Helm 4's plugin-based mechanism), so it works uniformly across helm template, helm install, helm upgrade, and helm diff — giving you a single patch file that governs preview, diff-against-live-state, and actual deployment.
+It plugs into Helm's standard --post-renderer hook (Helm 4's plugin-based mechanism), so it works uniformly across helm template, helm install, helm upgrade, and helm diff — giving a single patch file that governs preview, diff-against-live-state, and actual deployment.
 
 ## Prerequisites
 - Helm v4.0+
@@ -26,7 +26,7 @@ kustomize       0.1.0   postrenderer/v1 v1              unknown         unknown
 ```
 
 ## Create a Patch File
-Create a patch.yaml file with your desired modifications. The patch uses JSON Patch (RFC 6902) format:
+Create a patch.yaml file with desired modifications. The patch uses JSON Patch (RFC 6902) format:
 ```
 cat <<'EOF' > patch.yaml
 - target:
@@ -139,7 +139,7 @@ helm template/install/upgrade
   Helm pipes manifests → patch.sh (stdin)
         │
         ▼
-  patch.sh wraps them in a temp kustomization.yaml alongside your patch.yaml
+  patch.sh wraps them in a temp kustomization.yaml alongside patch.yaml
         │
         ▼
   kustomize build applies the patches
@@ -150,8 +150,8 @@ helm template/install/upgrade
 
 ## Components
 - `plugin.yaml`	Helm 4 plugin manifest — declares type: postrenderer/v1, subprocess runtime, entrypoint
-- `patch.sh`	Wraps stdin manifests + your patch file into a kustomize job, runs kustomize build
-- `patch.yaml` (user-supplied)	List of {target, patch} objects — your actual JSON6902 edits
+- `patch.sh`	Wraps stdin manifests + patch file into a kustomize job, runs kustomize build
+- `patch.yaml` (user-supplied)	List of {target, patch} objects — actual JSON6902 edits
 
 ## Troubleshooting
 ```
