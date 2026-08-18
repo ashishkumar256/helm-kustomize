@@ -108,7 +108,7 @@ spec:
 ```
 
 ## Compatibility with other plugin like helm-diff
-Let's update LOG_LEVEL value to info -
+Let's update `LOG_LEVEL` value to `info` -
 ```
 helm diff --context 2 upgrade --install metrics-server -n monitoring metrics-server/metrics-server \
   --post-renderer kustomize \
