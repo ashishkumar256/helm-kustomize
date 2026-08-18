@@ -4,6 +4,8 @@
 
 Community/vendor Helm charts often don't expose every field you need (env vars, sidecar containers, resource tweaks, labels) via values.yaml. Rather than forking the chart, this plugin lets you patch the rendered output directly, targeting any resource by kind, name, namespace, or label — without touching the chart source.
 
+It plugs into Helm's standard --post-renderer hook (Helm 4's plugin-based mechanism), so it works uniformly across helm template, helm install, helm upgrade, and helm diff — giving you a single patch file that governs preview, diff-against-live-state, and actual deployment.
+
 ## Prerequisites
 - Helm v4.0+
 
@@ -105,6 +107,23 @@ spec:
 
 ```
 
+## Compatibility with other plugin like helm-diff
+Let's update LOG_LEVEL value to info -
+```
+helm diff --context 2 upgrade --install metrics-server -n monitoring metrics-server/metrics-server \
+  --post-renderer kustomize \
+  --post-renderer-args patch.yaml
+monitoring, metrics-server, Deployment (apps) has changed:
+...
+          env:
+          - name: LOG_LEVEL
+-           value: debug
++           value: info
+          image: registry.k8s.io/metrics-server/metrics-server:v0.8.1
+          imagePullPolicy: IfNotPresent
+...
+```
+
 ## How it works
 ```
 helm template/install/upgrade
@@ -129,7 +148,6 @@ helm template/install/upgrade
 - `plugin.yaml`	Helm 4 plugin manifest — declares type: postrenderer/v1, subprocess runtime, entrypoint
 - `patch.sh`	Wraps stdin manifests + your patch file into a kustomize job, runs kustomize build
 - `patch.yaml` (user-supplied)	List of {target, patch} objects — your actual JSON6902 edits
-
 
 ## Troubleshooting
 ```
