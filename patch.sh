@@ -16,4 +16,4 @@ cat > "$WORKDIR/all.yaml"          # rendered manifests from Helm via stdin
   sed 's/^/  /' "$PATCH_FILE"      # indent user's list under 'patches:'
 } > "$WORKDIR/kustomization.yaml"
 
-kustomize build "$WORKDIR"
+kubectl kustomize build "$WORKDIR"
