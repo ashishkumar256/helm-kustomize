@@ -57,20 +57,22 @@ Operation	Description	Example
 
 ## Basic Usage with Helm
 ```
-helm template RELEASE_NAME CHART_NAME \
+helm upgrade --install RELEASE_NAME CHART_NAME \
   --post-renderer kustomize \
   --post-renderer-args patch.yaml \
-  -s TEMPLATE_FILE
 ```
 
 ## Specific Example: Metrics Server
+Let's install metrics-server (current chart version: 3.13.1) — the chart doesn't expose a way to add, update, or remove `env:` via values.yaml.
+
 ```
 helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
 
-helm template metrics-server metrics-server/metrics-server \
+helm upgrade --install metrics-server --create-namespace -n monitoring --wait metrics-server/metrics-server \
+  --version 3.13.1 \
+  --set args={--kubelet-insecure-tls} \
   --post-renderer kustomize \
-  --post-renderer-args patch.yaml \
-  -s templates/deployment.yaml
+  --post-renderer-args patch.yaml
 ```
 
 ## Verify 
@@ -111,6 +113,8 @@ spec:
 Let's update `LOG_LEVEL` value to `info` -
 ```
 helm diff --context 2 upgrade --install metrics-server -n monitoring metrics-server/metrics-server \
+  --version 3.13.1 \
+  --set args={--kubelet-insecure-tls} \
   --post-renderer kustomize \
   --post-renderer-args patch.yaml
 monitoring, metrics-server, Deployment (apps) has changed:
